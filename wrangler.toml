@@ -1,0 +1,33 @@
+name = "faro-divine-video"
+main = "src/worker.js"
+compatibility_date = "2024-01-01"
+account_id = "c84e7a9bf7ed99cb41b8e73566568c75"
+
+[env.production]
+kv_namespaces = [
+  { binding = "RULES", id = "5e6aa5d982dd439687760e722cabe1ca" }
+]
+vars = { ORIGIN_URL = "https://media.divine.video" }
+
+[env.staging]
+kv_namespaces = [
+  { binding = "RULES", id = "9bd8fb4db5a54cc182d78d34c45c01d8" }
+]
+vars = { ORIGIN_URL = "https://staging-media.divine.video" }
+
+[env.development]
+kv_namespaces = [
+  { binding = "RULES", preview_id = "preview_rules" }
+]
+vars = { ORIGIN_URL = "https://dev-media.divine.video" }
+
+# Routes will be configured separately if needed
+# [[routes]]
+# pattern = "divine.video/v/*"
+# zone_name = "divine.video"
+
+# Development settings
+[dev]
+port = 8787
+local_protocol = "http"
+ip = "127.0.0.1"

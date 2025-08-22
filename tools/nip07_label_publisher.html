@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DTSP Label Publisher (NIP‑07)</title>
+    <style>
+      :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif; }
+      body { margin: 24px; color: #1f2937; }
+      h1 { margin: 0 0 8px; font-size: 20px; }
+      fieldset { border: 1px solid #e5e7eb; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+      legend { padding: 0 6px; color: #374151; }
+      label { display:block; font-size: 12px; color:#4b5563; margin: 10px 0 4px; }
+      input, select, textarea { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+      button { appearance: none; border: 1px solid #10b981; color: #065f46; background: #ecfdf5; padding: 10px 12px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+      button.secondary { border-color: #93c5fd; color: #1e3a8a; background: #eff6ff; }
+      button.warn { border-color: #fca5a5; color: #7f1d1d; background: #fef2f2; }
+      .actions { display:flex; gap: 10px; flex-wrap: wrap; }
+      .status { margin-top: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; white-space: pre-wrap; background: #f9fafb; border: 1px solid #e5e7eb; padding: 10px; border-radius: 8px; }
+      .pill { display:inline-block; padding:2px 6px; border-radius: 999px; font-size: 11px; border:1px solid #e5e7eb; color:#374151; }
+      .grid { display:grid; gap: 12px; }
+    </style>
+  </head>
+  <body>
+    <h1>DTSP Label Publisher (NIP‑07)</h1>
+    <p class="pill">Signs kind:1985 with your NIP‑07 wallet and publishes to a relay.</p>
+
+    <fieldset>
+      <legend>Environment</legend>
+      <div class="row">
+        <div>
+          <label for="relay">Relay URL</label>
+          <input id="relay" value="wss://relay3.openvine.co" />
+        </div>
+        <div>
+          <label for="namespace">Namespace tag L</label>
+          <input id="namespace" value="divine.video/mod" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Detected signer npub</label>
+          <input id="npub" readonly placeholder="Click ‘Detect NIP‑07’" />
+        </div>
+        <div class="actions" style="align-items:end;">
+          <button id="detect">Detect NIP‑07</button>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Target</legend>
+      <div class="row">
+        <div>
+          <label for="targetType">Target type</label>
+          <select id="targetType">
+            <option value="e">Event (e)</option>
+            <option value="a">Address (a)</option>
+            <option value="p">Pubkey (p)</option>
+          </select>
+        </div>
+        <div>
+          <label for="targetVal">Target value</label>
+          <input id="targetVal" placeholder="event id OR a=kind:pubkey:identifier OR hex pubkey" />
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Label (DTSP‑aligned)</legend>
+      <div class="row">
+        <div>
+          <label for="category">Category (l)</label>
+          <select id="category"></select>
+        </div>
+        <div>
+          <label for="action">Action</label>
+          <select id="action">
+            <option value="">(none)</option>
+            <option>block</option>
+            <option>age_gate</option>
+            <option>blur</option>
+            <option>warn</option>
+            <option>mute</option>
+            <option>quarantine</option>
+          </select>
+        </div>
+      </div>
+      <div class="row3">
+        <div>
+          <label for="loc">Region (loc)</label>
+          <select id="loc">
+            <option value="">(none)</option>
+            <option>US</option>
+            <option>NZ</option>
+          </select>
+        </div>
+        <div>
+          <label for="sev">Severity (sev)</label>
+          <select id="sev">
+            <option value="">(none)</option>
+            <option>p0</option>
+            <option>p1</option>
+            <option>p2</option>
+          </select>
+        </div>
+        <div>
+          <label for="age">Age (age)</label>
+          <input id="age" type="number" min="0" placeholder="e.g., 18" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="exp">Expires (unix epoch)</label>
+          <input id="exp" placeholder="optional" />
+        </div>
+        <div>
+          <label for="evidence">Evidence URL (r)</label>
+          <input id="evidence" placeholder="https://... (redacted)" />
+        </div>
+      </div>
+      <div class="actions" style="margin-top:10px;">
+        <button type="button" class="secondary" id="preset_adult_nudity">Preset: adult_nudity (blur + 18)</button>
+        <button type="button" class="secondary" id="preset_explicit">Preset: explicit_sex (age_gate 18)</button>
+        <button type="button" class="secondary" id="preset_porn">Preset: pornography (age_gate 18)</button>
+        <button type="button" class="secondary" id="preset_dmca_us">Preset: DMCA US (copyright block)</button>
+        <button type="button" class="warn" id="preset_p0_sexual_minors">Preset: P0 sexual_minors (block)</button>
+      </div>
+    </fieldset>
+
+    <div class="actions">
+      <button id="publish">Sign & Publish (kind:1985)</button>
+      <button id="clear">Clear</button>
+    </div>
+    <div id="status" class="status">Ready.</div>
+
+    <script>
+      const DTSP_CATEGORIES = [
+        // Illegal/Safety
+        'sexual_minors','nonconsensual_sexual_content','credible_threats','doxxing_pii','terrorism_extremism','illegal_goods','malware_scam',
+        // Harmful
+        'hate_harassment','self_harm_suicide','bullying_abuse','graphic_violence_gore',
+        // Adult
+        'adult_nudity','explicit_sex','pornography','fetish','sexual_wellness',
+        // Integrity/Spam
+        'spam','platform_abuse','impersonation',
+        // IP/Rights
+        'copyright','trademark',
+        // Optional sensitive
+        'medical_misinformation','election_political_misinfo'
+      ];
+
+      const $ = (id) => document.getElementById(id);
+      const status = (msg) => { $('status').textContent = msg; };
+
+      // Populate categories
+      (function initCats(){
+        const sel = $('category');
+        DTSP_CATEGORIES.forEach(c => {
+          const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o);
+        });
+      })();
+
+      $('detect').addEventListener('click', async () => {
+        try {
+          if (!window.nostr) { status('NIP‑07 provider not found. Install a Nostr browser wallet.'); return; }
+          const pk = await window.nostr.getPublicKey();
+          $('npub').value = pk;
+          status('NIP‑07 detected. Pubkey set.');
+        } catch (e) {
+          status('Failed to detect NIP‑07: ' + (e && e.message || e));
+        }
+      });
+
+      // Presets
+      $('preset_adult_nudity').onclick = () => { $('category').value = 'adult_nudity'; $('action').value = 'blur'; $('age').value = '18'; $('sev').value='p2'; };
+      $('preset_explicit').onclick = () => { $('category').value = 'explicit_sex'; $('action').value = 'age_gate'; $('age').value = '18'; $('sev').value='p1'; };
+      $('preset_porn').onclick = () => { $('category').value = 'pornography'; $('action').value = 'age_gate'; $('age').value = '18'; $('sev').value='p1'; };
+      $('preset_dmca_us').onclick = () => { $('category').value = 'copyright'; $('action').value = 'block'; $('loc').value = 'US'; };
+      $('preset_p0_sexual_minors').onclick = () => { $('category').value = 'sexual_minors'; $('action').value = 'block'; $('sev').value='p0'; };
+
+      $('clear').addEventListener('click', () => {
+        ['targetVal','age','exp','evidence'].forEach(id => $(id).value = '');
+        ['action','loc','sev'].forEach(id => $(id).value = '');
+        status('Cleared.');
+      });
+
+      function buildTags() {
+        const tags = [];
+        const L = $('namespace').value.trim() || 'divine.video/mod';
+        const l = $('category').value.trim();
+        const targetType = $('targetType').value;
+        const targetVal = $('targetVal').value.trim();
+        if (!l) throw new Error('Category is required.');
+        if (!targetVal) throw new Error('Target value is required.');
+        tags.push(['l', l]);
+        tags.push(['L', L]);
+        tags.push([targetType, targetVal]);
+        const action = $('action').value.trim(); if (action) tags.push(['action', action]);
+        const loc = $('loc').value.trim(); if (loc) tags.push(['loc', loc]);
+        const sev = $('sev').value.trim(); if (sev) tags.push(['sev', sev]);
+        const age = $('age').value.trim(); if (age) tags.push(['age', age]);
+        const exp = $('exp').value.trim(); if (exp) tags.push(['exp', exp]);
+        const r = $('evidence').value.trim(); if (r) tags.push(['r', r]);
+        return tags;
+      }
+
+      function nostrEventId(evt) {
+        // Nip-01 id = sha256 serialized event; we rely on signer to compute, this is display-only.
+        return '(computed by signer)';
+      }
+
+      async function publishToRelay(relayURL, event) {
+        return new Promise((resolve, reject) => {
+          const ws = new WebSocket(relayURL);
+          const timer = setTimeout(() => { try { ws.close(); } catch {} reject(new Error('Relay timeout')); }, 7000);
+          ws.onopen = () => {
+            ws.send(JSON.stringify(['EVENT', event]));
+          };
+          ws.onmessage = (msg) => {
+            try {
+              const data = JSON.parse(msg.data);
+              // Expect ["OK", id, true/false, message]
+              if (Array.isArray(data) && data[0] === 'OK') {
+                clearTimeout(timer); ws.close();
+                const ok = data[2] === true;
+                return ok ? resolve({ ok: true, data }) : reject(new Error('Relay NAK: ' + (data[3]||'unknown')));
+              }
+            } catch {}
+          };
+          ws.onerror = (e) => { clearTimeout(timer); try { ws.close(); } catch {} reject(new Error('WS error')); };
+          ws.onclose = () => { /* no-op */ };
+        });
+      }
+
+      $('publish').addEventListener('click', async () => {
+        try {
+          if (!window.nostr) { status('NIP‑07 provider not found.'); return; }
+          const pubkey = await window.nostr.getPublicKey();
+          $('npub').value = pubkey;
+          const relayURL = $('relay').value.trim();
+          const tags = buildTags();
+          const unsigned = {
+            kind: 1985,
+            created_at: Math.floor(Date.now() / 1000),
+            tags,
+            content: '',
+            pubkey
+          };
+          status('Signing…');
+          const signed = await window.nostr.signEvent(unsigned);
+          status('Publishing…\n' + JSON.stringify(signed, null, 2));
+          const res = await publishToRelay(relayURL, signed);
+          status('Published.\nEvent id: ' + signed.id + '\nRelay OK: ' + JSON.stringify(res.data));
+        } catch (e) {
+          status('Error: ' + (e && e.message || e));
+        }
+      });
+    </script>
+  </body>
+  </html>
+

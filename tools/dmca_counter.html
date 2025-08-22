@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DMCA Counter-Notice</title>
+  <style>
+    :root { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #1f2937;
+    }
+    body { 
+      margin: 0;
+      padding: 24px;
+      background: #f9fafb;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    h1 { 
+      margin: 0 0 8px;
+      font-size: 28px;
+      color: #111827;
+    }
+    .subtitle {
+      color: #6b7280;
+      margin: 0 0 32px;
+      font-size: 14px;
+    }
+    .warning {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 0 0 24px;
+      font-size: 14px;
+      color: #991b1b;
+    }
+    .info {
+      background: #dbeafe;
+      border: 1px solid #3b82f6;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 0 0 24px;
+      font-size: 14px;
+      color: #1e3a8a;
+    }
+    fieldset {
+      border: 1px solid #e5e7eb;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 0 0 20px;
+    }
+    legend {
+      padding: 0 8px;
+      color: #374151;
+      font-weight: 600;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      color: #4b5563;
+      margin: 16px 0 6px;
+      font-weight: 500;
+    }
+    label.required::after {
+      content: " *";
+      color: #ef4444;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .checkbox-group {
+      margin: 16px 0;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 8px 0;
+      font-size: 14px;
+      color: #374151;
+      cursor: pointer;
+    }
+    .checkbox-label input {
+      width: auto;
+      margin-top: 2px;
+    }
+    button {
+      appearance: none;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button.primary {
+      background: #10b981;
+      color: white;
+    }
+    button.primary:hover {
+      background: #059669;
+    }
+    button.secondary {
+      background: #f3f4f6;
+      color: #374151;
+      margin-right: 12px;
+    }
+    button.secondary:hover {
+      background: #e5e7eb;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .status {
+      margin: 20px 0;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+    .status.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+    .help-text {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+    .timeline {
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 16px 0;
+    }
+    .timeline h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      color: #374151;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 12px;
+      margin: 8px 0;
+      font-size: 14px;
+    }
+    .timeline-day {
+      font-weight: 600;
+      color: #3b82f6;
+      min-width: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DMCA Counter-Notice</h1>
+    <p class="subtitle">Contest a copyright takedown if you believe it was filed in error</p>
+    
+    <div class="warning">
+      <strong>⚠️ Serious Legal Consequences:</strong> Filing a counter-notice will provide your personal information to the original complainant and may result in legal action. You may be sued for damages if you misrepresent that the material was removed by mistake. Consult with an attorney before proceeding.
+    </div>
+
+    <div class="info">
+      <strong>ℹ️ Counter-Notice Process:</strong> After receiving a valid counter-notice, we will forward it to the original complainant. They have 10 business days to file a lawsuit. If they don't, we may restore the content within 10-14 business days.
+    </div>
+
+    <div class="timeline">
+      <h3>Expected Timeline</h3>
+      <div class="timeline-item">
+        <span class="timeline-day">Day 0</span>
+        <span>You submit counter-notice</span>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-day">Day 1-2</span>
+        <span>We review and forward to complainant</span>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-day">Day 3-13</span>
+        <span>Complainant has 10 business days to file lawsuit</span>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-day">Day 10-14</span>
+        <span>Content may be restored if no lawsuit filed</span>
+      </div>
+    </div>
+
+    <form id="counterForm">
+      <fieldset>
+        <legend>Your Information</legend>
+        
+        <label for="name" class="required">Full Legal Name</label>
+        <input type="text" id="name" name="name" required>
+        <p class="help-text">This will be shared with the complainant</p>
+        
+        <label for="email" class="required">Email Address</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="phone" class="required">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required>
+        <p class="help-text">This will be shared with the complainant</p>
+        
+        <label for="address" class="required">Physical Address</label>
+        <textarea id="address" name="address" required placeholder="Street Address&#10;City, State/Province ZIP&#10;Country"></textarea>
+        <p class="help-text">Must be a physical address where you can receive legal documents</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Removed Content</legend>
+        
+        <label for="dmca_id" class="required">DMCA Reference ID</label>
+        <input type="text" id="dmca_id" name="dmca_id" required placeholder="DMCA-xxxxx or takedown reference">
+        
+        <label for="event_id" class="required">Nostr Event ID or URL</label>
+        <input type="text" id="event_id" name="event_id" required placeholder="Event ID or original content URL">
+        
+        <label for="content_description" class="required">Description of Removed Content</label>
+        <textarea id="content_description" name="content_description" required placeholder="Describe the content that was removed"></textarea>
+        
+        <label for="removal_date">Approximate Date of Removal</label>
+        <input type="date" id="removal_date" name="removal_date">
+      </fieldset>
+
+      <fieldset>
+        <legend>Basis for Counter-Notice</legend>
+        
+        <label for="basis" class="required">Why should the content be restored?</label>
+        <select id="basis" name="basis" required>
+          <option value="">Select primary reason...</option>
+          <option value="mistake">Content was removed by mistake or misidentification</option>
+          <option value="fair_use">Content is fair use (criticism, comment, education, etc.)</option>
+          <option value="authorized">I have authorization from the copyright owner</option>
+          <option value="public_domain">Content is in the public domain</option>
+          <option value="original">I am the original copyright owner</option>
+          <option value="license">Content is properly licensed</option>
+          <option value="false_claim">The DMCA claim is fraudulent or in bad faith</option>
+        </select>
+        
+        <label for="explanation" class="required">Detailed Explanation</label>
+        <textarea id="explanation" name="explanation" required rows="6" placeholder="Provide a detailed explanation of why the takedown was improper. Include any relevant facts, licenses, or legal arguments."></textarea>
+        
+        <label for="evidence">Supporting Evidence or Documentation</label>
+        <textarea id="evidence" name="evidence" placeholder="List any evidence that supports your counter-notice (URLs, license numbers, registration info, etc.)"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Required Legal Statements</legend>
+        
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="jurisdiction" name="jurisdiction" required>
+            <span>I consent to the jurisdiction of the Federal District Court for the district in which my address is located, or if my address is outside the United States, the Northern District of California.</span>
+          </label>
+          
+          <label class="checkbox-label">
+            <input type="checkbox" id="service" name="service" required>
+            <span>I will accept service of process from the person who provided the original DMCA notification or an agent of such person.</span>
+          </label>
+          
+          <label class="checkbox-label">
+            <input type="checkbox" id="good_faith" name="good_faith" required>
+            <span>I swear, under penalty of perjury, that I have a good faith belief that the material was removed or disabled as a result of mistake or misidentification.</span>
+          </label>
+          
+          <label class="checkbox-label">
+            <input type="checkbox" id="understand_risks" name="understand_risks" required>
+            <span>I understand that filing this counter-notice may result in the complainant filing a lawsuit against me, and that my personal information will be shared with them.</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Electronic Signature</legend>
+        
+        <label for="signature" class="required">Type Your Full Legal Name</label>
+        <input type="text" id="signature" name="signature" required>
+        <p class="help-text">Must match the name provided above</p>
+        
+        <label for="date" class="required">Date</label>
+        <input type="date" id="date" name="date" required>
+      </fieldset>
+
+      <div id="status"></div>
+
+      <div class="actions">
+        <button type="button" class="secondary" onclick="clearForm()">Clear Form</button>
+        <button type="submit" class="primary">Submit Counter-Notice</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Set today's date
+    document.getElementById('date').valueAsDate = new Date();
+    
+    function clearForm() {
+      if (confirm('Clear all form data?')) {
+        document.getElementById('counterForm').reset();
+        document.getElementById('date').valueAsDate = new Date();
+        document.getElementById('status').innerHTML = '';
+      }
+    }
+    
+    document.getElementById('counterForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const statusDiv = document.getElementById('status');
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      
+      // Validate signature matches name
+      const name = document.getElementById('name').value.trim();
+      const signature = document.getElementById('signature').value.trim();
+      
+      if (name.toLowerCase() !== signature.toLowerCase()) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = 'Electronic signature must match your full legal name';
+        return;
+      }
+      
+      // Final confirmation
+      const confirmed = confirm(
+        'Are you sure you want to submit this counter-notice?\n\n' +
+        '• Your personal information will be shared with the complainant\n' +
+        '• You may be subject to legal action\n' +
+        '• False statements may result in liability for damages\n\n' +
+        'Click OK to proceed or Cancel to review your submission.'
+      );
+      
+      if (!confirmed) return;
+      
+      // Collect form data
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      data.timestamp = new Date().toISOString();
+      data.type = 'dmca_counter_notice';
+      
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+        
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Store submission (in production, send to backend)
+        const submissions = JSON.parse(localStorage.getItem('dmca_counter_notices') || '[]');
+        submissions.push(data);
+        localStorage.setItem('dmca_counter_notices', JSON.stringify(submissions));
+        
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = `
+          <strong>✓ Counter-notice submitted successfully</strong><br>
+          Reference ID: COUNTER-${Date.now()}<br>
+          You will receive a confirmation email at ${data.email}<br><br>
+          <strong>Next Steps:</strong><br>
+          1. We will review your counter-notice within 1-2 business days<br>
+          2. If valid, we'll forward it to the original complainant<br>
+          3. The complainant has 10 business days to file a lawsuit<br>
+          4. If no lawsuit is filed, content may be restored in 10-14 business days
+        `;
+        
+        // Clear form after success
+        setTimeout(() => {
+          if (confirm('Submit another counter-notice?')) {
+            clearForm();
+          }
+        }, 3000);
+        
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = 'Error submitting counter-notice. Please try again.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Counter-Notice';
+      }
+    });
+  </script>
+</body>
+</html>

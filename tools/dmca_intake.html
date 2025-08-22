@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DMCA Takedown Request</title>
+  <style>
+    :root { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #1f2937;
+    }
+    body { 
+      margin: 0;
+      padding: 24px;
+      background: #f9fafb;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    h1 { 
+      margin: 0 0 8px;
+      font-size: 28px;
+      color: #111827;
+    }
+    .subtitle {
+      color: #6b7280;
+      margin: 0 0 32px;
+      font-size: 14px;
+    }
+    .warning {
+      background: #fef3c7;
+      border: 1px solid #fbbf24;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 0 0 24px;
+      font-size: 14px;
+      color: #92400e;
+    }
+    fieldset {
+      border: 1px solid #e5e7eb;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 0 0 20px;
+    }
+    legend {
+      padding: 0 8px;
+      color: #374151;
+      font-weight: 600;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      color: #4b5563;
+      margin: 16px 0 6px;
+      font-weight: 500;
+    }
+    label.required::after {
+      content: " *";
+      color: #ef4444;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .checkbox-group {
+      margin: 16px 0;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 8px 0;
+      font-size: 14px;
+      color: #374151;
+      cursor: pointer;
+    }
+    .checkbox-label input {
+      width: auto;
+      margin-top: 2px;
+    }
+    button {
+      appearance: none;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button.primary {
+      background: #3b82f6;
+      color: white;
+    }
+    button.primary:hover {
+      background: #2563eb;
+    }
+    button.secondary {
+      background: #f3f4f6;
+      color: #374151;
+      margin-right: 12px;
+    }
+    button.secondary:hover {
+      background: #e5e7eb;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .status {
+      margin: 20px 0;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .status.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+    .status.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+    .help-text {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DMCA Takedown Request</h1>
+    <p class="subtitle">Submit a copyright infringement claim under the Digital Millennium Copyright Act</p>
+    
+    <div class="warning">
+      <strong>⚠️ Legal Notice:</strong> Submitting false or misleading DMCA claims may result in legal liability under 17 U.S.C. § 512(f). You must have a good faith belief that the use of the material is not authorized by the copyright owner.
+    </div>
+
+    <form id="dmcaForm">
+      <fieldset>
+        <legend>Your Information</legend>
+        
+        <label for="name" class="required">Full Legal Name</label>
+        <input type="text" id="name" name="name" required>
+        
+        <label for="email" class="required">Email Address</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone">
+        
+        <label for="address" class="required">Mailing Address</label>
+        <textarea id="address" name="address" required placeholder="Street Address&#10;City, State/Province ZIP&#10;Country"></textarea>
+        
+        <label for="relationship" class="required">Relationship to Copyright Owner</label>
+        <select id="relationship" name="relationship" required>
+          <option value="">Select...</option>
+          <option value="owner">I am the copyright owner</option>
+          <option value="agent">I am an authorized agent of the copyright owner</option>
+          <option value="exclusive">I hold exclusive rights to this content</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Copyrighted Work</legend>
+        
+        <label for="work_description" class="required">Description of Copyrighted Work</label>
+        <textarea id="work_description" name="work_description" required placeholder="Describe the original copyrighted work that has been infringed"></textarea>
+        
+        <label for="work_url">URL to Original Work (if available online)</label>
+        <input type="url" id="work_url" name="work_url" placeholder="https://...">
+        
+        <label for="registration">Copyright Registration Number (if registered)</label>
+        <input type="text" id="registration" name="registration" placeholder="TX0000000">
+        <p class="help-text">Registration is not required for a valid DMCA claim</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Infringing Content</legend>
+        
+        <label for="event_id" class="required">Nostr Event ID or URL</label>
+        <input type="text" id="event_id" name="event_id" required placeholder="Event ID or divine.video URL">
+        
+        <label for="infringing_urls" class="required">Infringing Content URLs</label>
+        <textarea id="infringing_urls" name="infringing_urls" required placeholder="List all URLs containing infringing content (one per line)"></textarea>
+        
+        <label for="description" class="required">Description of Infringement</label>
+        <textarea id="description" name="description" required placeholder="Explain how this content infringes your copyright"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <legend>Required Statements</legend>
+        
+        <div class="checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="good_faith" name="good_faith" required>
+            <span>I have a good faith belief that use of the copyrighted materials described above is not authorized by the copyright owner, its agent, or the law.</span>
+          </label>
+          
+          <label class="checkbox-label">
+            <input type="checkbox" id="accuracy" name="accuracy" required>
+            <span>The information in this notification is accurate, and under penalty of perjury, I am the copyright owner or authorized to act on behalf of the owner.</span>
+          </label>
+          
+          <label class="checkbox-label">
+            <input type="checkbox" id="consent" name="consent" required>
+            <span>I consent to the jurisdiction of the Federal District Court for the district in which my address is located, or if outside the USA, the Northern District of California.</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Electronic Signature</legend>
+        
+        <label for="signature" class="required">Type Your Full Legal Name</label>
+        <input type="text" id="signature" name="signature" required>
+        <p class="help-text">Typing your name serves as your electronic signature</p>
+        
+        <label for="date" class="required">Date</label>
+        <input type="date" id="date" name="date" required>
+      </fieldset>
+
+      <div id="status"></div>
+
+      <div class="actions">
+        <button type="button" class="secondary" onclick="clearForm()">Clear Form</button>
+        <button type="submit" class="primary">Submit DMCA Request</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Set today's date
+    document.getElementById('date').valueAsDate = new Date();
+    
+    function clearForm() {
+      if (confirm('Clear all form data?')) {
+        document.getElementById('dmcaForm').reset();
+        document.getElementById('date').valueAsDate = new Date();
+        document.getElementById('status').innerHTML = '';
+      }
+    }
+    
+    document.getElementById('dmcaForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const statusDiv = document.getElementById('status');
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      
+      // Validate signature matches name
+      const name = document.getElementById('name').value.trim();
+      const signature = document.getElementById('signature').value.trim();
+      
+      if (name.toLowerCase() !== signature.toLowerCase()) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = 'Electronic signature must match your full legal name';
+        return;
+      }
+      
+      // Collect form data
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+      data.timestamp = new Date().toISOString();
+      data.type = 'dmca_takedown';
+      
+      // In production, this would submit to a backend API
+      // For now, we'll store in localStorage and show success
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+        
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Store submission (in production, send to backend)
+        const submissions = JSON.parse(localStorage.getItem('dmca_submissions') || '[]');
+        submissions.push(data);
+        localStorage.setItem('dmca_submissions', JSON.stringify(submissions));
+        
+        statusDiv.className = 'status success';
+        statusDiv.innerHTML = `
+          <strong>✓ DMCA request submitted successfully</strong><br>
+          Reference ID: DMCA-${Date.now()}<br>
+          You will receive a confirmation email at ${data.email}
+        `;
+        
+        // Clear form after success
+        setTimeout(() => {
+          if (confirm('Submit another DMCA request?')) {
+            clearForm();
+          }
+        }, 2000);
+        
+      } catch (error) {
+        statusDiv.className = 'status error';
+        statusDiv.textContent = 'Error submitting request. Please try again.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit DMCA Request';
+      }
+    });
+  </script>
+</body>
+</html>

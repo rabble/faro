@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nostr Trust & Safety Labeler</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Navigation Header -->
+    <header class="nav-header">
+      <div class="nav-container">
+        <div class="nav-brand" style="cursor: pointer;" onclick="showDashboard()">
+          <h1>🏷️ Nostr T&S</h1>
+          <span class="nav-subtitle">Trust & Safety Labeler</span>
+        </div>
+        
+        <!-- Relay Selector in Header -->
+        <div class="nav-relay hidden" id="navRelay">
+          <select id="relaySelect" onchange="changeRelay(this.value)" class="relay-select-header">
+            <option value="wss://relay3.openvine.co">relay3.openvine.co</option>
+            <option value="wss://relay.damus.io">relay.damus.io</option>
+            <option value="wss://nos.lol">nos.lol</option>
+            <option value="wss://relay.nostr.band">relay.nostr.band</option>
+            <option value="wss://relay.snort.social">relay.snort.social</option>
+            <option value="wss://relay.primal.net">relay.primal.net</option>
+            <option value="wss://purplepag.es">purplepag.es</option>
+            <option value="custom">Custom...</option>
+          </select>
+          <input id="customRelay" type="text" placeholder="wss://..." class="custom-relay-header" style="display: none;">
+          <button id="connectRelay" class="btn-small" style="display: none;" onclick="connectCustomRelay()">Connect</button>
+          <div id="relayStatus" class="relay-status-header"></div>
+        </div>
+        
+        <div class="nav-user">
+          <div id="userInfo" class="user-info hidden">
+            <span class="user-npub"></span>
+            <button id="logoutBtn" class="btn-small">Disconnect</button>
+          </div>
+          <button id="loginBtn" class="btn-primary">Connect Wallet</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+      <!-- Login Gate -->
+      <div id="loginGate" class="login-gate">
+        <div class="login-card">
+          <h2>Nostr Trust & Safety Labeler</h2>
+          <p>Decentralized content moderation for the Nostr protocol</p>
+          
+          <div class="login-instructions">
+            <h3>To get started:</h3>
+            <ol>
+              <li>Install a Nostr wallet extension:
+                <ul>
+                  <li><a href="https://getalby.com" target="_blank">Alby</a> (recommended)</li>
+                  <li><a href="https://github.com/fiatjaf/nos2x" target="_blank">nos2x</a></li>
+                </ul>
+              </li>
+              <li>Click "Connect Wallet" above</li>
+              <li>Approve the connection in your wallet</li>
+            </ol>
+          </div>
+          
+          <div class="login-features">
+            <h3>Features:</h3>
+            <div class="feature-grid">
+              <div class="feature">
+                <span class="feature-icon">🏷️</span>
+                <strong>Label Publisher</strong>
+                <p>Create DTSP-aligned content labels</p>
+              </div>
+              <div class="feature">
+                <span class="feature-icon">🌍</span>
+                <strong>Geoblock Manager</strong>
+                <p>Regional content restrictions</p>
+              </div>
+              <div class="feature">
+                <span class="feature-icon">📋</span>
+                <strong>DMCA Processing</strong>
+                <p>Handle takedown requests</p>
+              </div>
+              <div class="feature">
+                <span class="feature-icon">📊</span>
+                <strong>Moderation Queue</strong>
+                <p>Review reported content</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Dashboard (hidden until logged in) -->
+      <div id="dashboard" class="dashboard hidden">
+        <!-- Action Cards -->
+        <div class="action-grid">
+          <div class="action-card" onclick="navigateTo('labeler')">
+            <h3>🏷️ Label Content</h3>
+            <p>Apply DTSP labels to events</p>
+            <button class="btn-secondary">Create Label →</button>
+          </div>
+          
+          <div class="action-card" onclick="navigateTo('reports')">
+            <h3>📢 Review Reports</h3>
+            <p class="badge" id="reportCount">0 pending</p>
+            <button class="btn-secondary">View Queue →</button>
+          </div>
+          
+          <div class="action-card" onclick="navigateTo('dmca')">
+            <h3>⚖️ DMCA Requests</h3>
+            <p>Process takedown notices</p>
+            <button class="btn-secondary">Manage →</button>
+          </div>
+          
+          <div class="action-card" onclick="navigateTo('rules')">
+            <h3>🚫 Active Rules</h3>
+            <p class="badge" id="ruleCount">0 active</p>
+            <button class="btn-secondary">View Rules →</button>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+          <h2>Recent Activity</h2>
+          <div id="activityFeed" class="activity-feed">
+            <div class="activity-empty">No recent activity</div>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value" id="statLabels">0</span>
+            <span class="stat-label">Labels Today</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="statBlocks">0</span>
+            <span class="stat-label">Active Blocks</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="statReports">0</span>
+            <span class="stat-label">Open Reports</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="statDMCA">0</span>
+            <span class="stat-label">DMCA Pending</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Router -->
+    <div id="pageContent" class="page-content hidden"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
