@@ -6,7 +6,9 @@ const APP = {
   user: null,
   npub: null,
   pubkey: null,
-  relay: localStorage.getItem('faro_relay') || 'wss://relay3.openvine.co',
+  relay: localStorage.getItem('faro_relay') || 'wss://relay.damus.io',
+  userRelays: [], // User's relays from their profile
+  customRelays: JSON.parse(localStorage.getItem('faro_custom_relays') || '[]'),
   workerUrl: window.location.hostname === 'localhost' 
     ? 'https://faro-divine-video-staging.protestnet.workers.dev'
     : 'https://faro-divine-video-production.protestnet.workers.dev',
@@ -17,14 +19,14 @@ const APP = {
     reports: 0,
     dmca: 0
   },
-  relays: [
-    'wss://relay3.openvine.co',
+  defaultRelays: [
     'wss://relay.damus.io',
     'wss://nos.lol',
     'wss://relay.nostr.band',
     'wss://relay.snort.social',
     'wss://relay.primal.net',
-    'wss://purplepag.es'
+    'wss://purplepag.es',
+    'wss://relay3.openvine.co'
   ]
 };
 
@@ -58,6 +60,9 @@ async function init() {
         document.getElementById('navRelay').classList.remove('hidden');
         document.querySelector('.user-npub').textContent = APP.npub.substring(0, 16) + '...';
         
+        // Fetch user's relays
+        await fetchUserRelays();
+        
         // Load dashboard
         showDashboard();
         loadActivity();
@@ -77,27 +82,125 @@ async function init() {
 
 function setupRelaySelector() {
   const savedRelay = localStorage.getItem('faro_relay') || APP.relay;
-  const select = document.getElementById('relaySelect');
-  const customInput = document.getElementById('customRelay');
-  const connectBtn = document.getElementById('connectRelay');
   const status = document.getElementById('relayStatus');
   
-  if (select) {
-    // Check if saved relay is in predefined list
-    if (APP.relays.includes(savedRelay)) {
-      select.value = savedRelay;
-      status.textContent = `Connected to: ${savedRelay.replace('wss://', '')}`;
-    } else {
-      // Custom relay
-      select.value = 'custom';
-      customInput.value = savedRelay;
-      customInput.style.display = 'block';
-      connectBtn.style.display = 'block';
-      status.textContent = `Connected to: ${savedRelay.replace('wss://', '')}`;
-    }
-    
-    APP.relay = savedRelay;
+  if (status) {
+    status.innerHTML = `<span style="color: var(--success);">✓ Connected to: ${savedRelay.replace('wss://', '')}</span>`;
   }
+  
+  APP.relay = savedRelay;
+  updateRelaySelector();
+}
+
+// Update relay selector with combined relay list
+function updateRelaySelector() {
+  const select = document.getElementById('relaySelect');
+  if (!select) return;
+  
+  // Clear current options
+  select.innerHTML = '';
+  
+  // Combine all relay sources
+  const allRelays = new Set();
+  
+  // Add user's relays first (if any)
+  if (APP.userRelays.length > 0) {
+    const userGroup = document.createElement('optgroup');
+    userGroup.label = '👤 Your Relays';
+    APP.userRelays.forEach(relay => {
+      allRelays.add(relay);
+      const option = document.createElement('option');
+      option.value = relay;
+      option.textContent = relay.replace('wss://', '').replace('ws://', '');
+      if (relay === APP.relay) option.selected = true;
+      userGroup.appendChild(option);
+    });
+    select.appendChild(userGroup);
+  }
+  
+  // Add custom relays
+  if (APP.customRelays.length > 0) {
+    const customGroup = document.createElement('optgroup');
+    customGroup.label = '⭐ Saved Relays';
+    APP.customRelays.forEach(relay => {
+      if (!allRelays.has(relay)) {
+        allRelays.add(relay);
+        const option = document.createElement('option');
+        option.value = relay;
+        option.textContent = relay.replace('wss://', '').replace('ws://', '');
+        if (relay === APP.relay) option.selected = true;
+        customGroup.appendChild(option);
+      }
+    });
+    select.appendChild(customGroup);
+  }
+  
+  // Add default relays
+  const defaultGroup = document.createElement('optgroup');
+  defaultGroup.label = '🌐 Popular Relays';
+  APP.defaultRelays.forEach(relay => {
+    if (!allRelays.has(relay)) {
+      const option = document.createElement('option');
+      option.value = relay;
+      option.textContent = relay.replace('wss://', '').replace('ws://', '');
+      if (relay === APP.relay) option.selected = true;
+      defaultGroup.appendChild(option);
+    }
+  });
+  select.appendChild(defaultGroup);
+  
+  // Add option to add custom relay
+  const addOption = document.createElement('option');
+  addOption.value = 'add_custom';
+  addOption.textContent = '➕ Add Custom Relay...';
+  select.appendChild(addOption);
+  
+  // Add option to manage relays
+  const manageOption = document.createElement('option');
+  manageOption.value = 'manage';
+  manageOption.textContent = '⚙️ Manage Relays...';
+  select.appendChild(manageOption);
+}
+
+// Fetch events from a specific relay
+async function fetchFromRelay(relayUrl, filter) {
+  return new Promise((resolve, reject) => {
+    const ws = new WebSocket(relayUrl);
+    const subId = 'sub' + Math.random().toString(36).substring(7);
+    const events = [];
+    let timeout;
+    
+    ws.onopen = () => {
+      // Send subscription
+      ws.send(JSON.stringify(['REQ', subId, filter]));
+      
+      // Set timeout
+      timeout = setTimeout(() => {
+        ws.close();
+        resolve(events);
+      }, 3000);
+    };
+    
+    ws.onmessage = (msg) => {
+      try {
+        const data = JSON.parse(msg.data);
+        if (data[0] === 'EVENT' && data[1] === subId) {
+          events.push(data[2]);
+        } else if (data[0] === 'EOSE' && data[1] === subId) {
+          clearTimeout(timeout);
+          ws.close();
+          resolve(events);
+        }
+      } catch (e) {
+        console.error('Failed to parse message:', e);
+      }
+    };
+    
+    ws.onerror = () => {
+      clearTimeout(timeout);
+      reject(new Error('WebSocket error'));
+    };
+  });
 }
 
 // NIP-07 Authentication
@@ -124,6 +227,9 @@ async function login() {
     document.getElementById('navRelay').classList.remove('hidden');
     document.querySelector('.user-npub').textContent = APP.npub.substring(0, 16) + '...';
     
+    // Fetch user's relays
+    await fetchUserRelays();
+    
     // Load dashboard
     showDashboard();
     
@@ -131,6 +237,72 @@ async function login() {
     console.error('Login failed:', error);
     alert('Failed to connect wallet. Please try again.');
   }
+}
+
+// Fetch user's relays from their profile
+async function fetchUserRelays() {
+  try {
+    // Try to get user's relay list (NIP-65)
+    if (window.nostr && window.nostr.getRelays) {
+      const relays = await window.nostr.getRelays();
+      if (relays && Object.keys(relays).length > 0) {
+        APP.userRelays = Object.keys(relays).filter(url => 
+          url.startsWith('wss://') || url.startsWith('ws://')
+        );
+        
+        // Update relay selector with user's relays
+        updateRelaySelector();
+        return;
+      }
+    }
+    
+    // Fallback: fetch user's kind:3 (contact list) or kind:10002 (relay list) events
+    const filter = {
+      kinds: [3, 10002],
+      authors: [APP.pubkey],
+      limit: 1
+    };
+    
+    // Try a few default relays to find user's relay list
+    for (const relayUrl of APP.defaultRelays.slice(0, 3)) {
+      try {
+        const events = await fetchFromRelay(relayUrl, filter);
+        if (events && events.length > 0) {
+          const event = events[0];
+          
+          // Parse relays from tags (NIP-65)
+          if (event.kind === 10002) {
+            APP.userRelays = event.tags
+              .filter(tag => tag[0] === 'r' && tag[1])
+              .map(tag => tag[1])
+              .filter(url => url.startsWith('wss://') || url.startsWith('ws://'));
+          }
+          // Parse from content (kind:3)
+          else if (event.kind === 3 && event.content) {
+            try {
+              const content = JSON.parse(event.content);
+              APP.userRelays = Object.keys(content)
+                .filter(url => url.startsWith('wss://') || url.startsWith('ws://'));
+            } catch (e) {
+              console.log('Could not parse kind:3 content');
+            }
+          }
+          
+          if (APP.userRelays.length > 0) {
+            updateRelaySelector();
+            break;
+          }
+        }
+      } catch (e) {
+        console.log(`Could not fetch from ${relayUrl}:`, e);
+      }
+    }
+  } catch (error) {
+    console.error('Failed to fetch user relays:', error);
+  }
+  
+  // Always update selector even if no user relays found
+  updateRelaySelector();
 }
 
 function logout() {
@@ -1380,13 +1552,22 @@ function changeRelay(value) {
   const connectBtn = document.getElementById('connectRelay');
   const status = document.getElementById('relayStatus');
   
-  if (value === 'custom') {
-    // Show custom input
+  if (value === 'add_custom') {
+    // Show custom input for adding new relay
     customInput.style.display = 'block';
     connectBtn.style.display = 'block';
     customInput.focus();
-    status.innerHTML = '<span style="color: var(--warning);">⚠️ Enter custom relay URL and click Connect</span>';
-  } else {
+    customInput.placeholder = 'wss://your-relay.com';
+    status.innerHTML = '<span style="color: var(--warning);">⚠️ Enter relay URL and click Connect</span>';
+    
+    // Reset selector to current relay
+    document.getElementById('relaySelect').value = APP.relay;
+  } 
+  else if (value === 'manage') {
+    // Show relay management modal
+    showRelayManager();
+  }
+  else {
     // Hide custom input and connect to selected relay
     customInput.style.display = 'none';
     connectBtn.style.display = 'none';
@@ -1403,6 +1584,86 @@ function changeRelay(value) {
       setTimeout(() => loadReports(), 500);
     }
   }
+}
+
+// Show relay management interface
+function showRelayManager() {
+  const content = `
+    <div style="padding: 20px;">
+      <h3>📡 Manage Relays</h3>
+      
+      <div style="margin: 20px 0;">
+        <h4>Your Relays (${APP.userRelays.length})</h4>
+        ${APP.userRelays.length > 0 ? 
+          APP.userRelays.map(r => `
+            <div style="padding: 8px; background: var(--light); margin: 4px 0; border-radius: 6px;">
+              ${r.replace('wss://', '')}
+            </div>
+          `).join('') :
+          '<p style="color: var(--gray);">No relays found in your profile</p>'
+        }
+      </div>
+      
+      <div style="margin: 20px 0;">
+        <h4>Saved Custom Relays (${APP.customRelays.length})</h4>
+        ${APP.customRelays.length > 0 ? 
+          APP.customRelays.map((r, i) => `
+            <div style="padding: 8px; background: var(--light); margin: 4px 0; border-radius: 6px; display: flex; justify-content: space-between;">
+              <span>${r.replace('wss://', '')}</span>
+              <button onclick="removeCustomRelay(${i})" class="btn-small" style="background: var(--danger); color: white;">Remove</button>
+            </div>
+          `).join('') :
+          '<p style="color: var(--gray);">No custom relays saved</p>'
+        }
+      </div>
+      
+      <div style="margin: 20px 0;">
+        <h4>Add New Relay</h4>
+        <input type="text" id="newRelayUrl" placeholder="wss://relay.example.com" style="width: 100%; padding: 8px; margin: 8px 0;">
+        <button onclick="addCustomRelay()" class="btn-primary">Add Relay</button>
+      </div>
+      
+      <button onclick="closeRelayManager()" class="btn-secondary">Close</button>
+    </div>
+  `;
+  
+  document.getElementById('pageContent').innerHTML = content;
+  document.getElementById('pageContent').classList.remove('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+}
+
+// Close relay manager
+function closeRelayManager() {
+  document.getElementById('pageContent').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+}
+
+// Add custom relay
+function addCustomRelay() {
+  const input = document.getElementById('newRelayUrl');
+  const url = input.value.trim();
+  
+  if (!url) return;
+  
+  if (!url.startsWith('wss://') && !url.startsWith('ws://')) {
+    alert('Relay URL must start with wss:// or ws://');
+    return;
+  }
+  
+  if (!APP.customRelays.includes(url)) {
+    APP.customRelays.push(url);
+    localStorage.setItem('faro_custom_relays', JSON.stringify(APP.customRelays));
+    updateRelaySelector();
+    showRelayManager(); // Refresh view
+  }
+}
+
+// Remove custom relay
+function removeCustomRelay(index) {
+  APP.customRelays.splice(index, 1);
+  localStorage.setItem('faro_custom_relays', JSON.stringify(APP.customRelays));
+  updateRelaySelector();
+  showRelayManager(); // Refresh view
 }
 
 function connectCustomRelay() {
@@ -1428,8 +1689,24 @@ function connectCustomRelay() {
     // Connection successful
     APP.relay = customUrl;
     localStorage.setItem('faro_relay', customUrl);
+    
+    // Save to custom relays if not already there
+    if (!APP.customRelays.includes(customUrl) && !APP.userRelays.includes(customUrl)) {
+      APP.customRelays.push(customUrl);
+      localStorage.setItem('faro_custom_relays', JSON.stringify(APP.customRelays));
+    }
+    
     status.innerHTML = `<span style="color: var(--success);">✓ Connected to: ${customUrl.replace('wss://', '')}</span>`;
     ws.close();
+    
+    // Update selector
+    updateRelaySelector();
+    document.getElementById('relaySelect').value = customUrl;
+    
+    // Hide input
+    document.getElementById('customRelay').style.display = 'none';
+    document.getElementById('connectRelay').style.display = 'none';
+    document.getElementById('customRelay').value = '';
     
     // Refresh reports if on reports page
     if (APP.currentPage === 'reports') {
@@ -1513,3 +1790,8 @@ window.loadReports = loadReports;
 window.quickAction = quickAction;
 window.applyModeration = applyModeration;
 window.toggleContent = toggleContent;
+window.showRelayManager = showRelayManager;
+window.closeRelayManager = closeRelayManager;
+window.addCustomRelay = addCustomRelay;
+window.removeCustomRelay = removeCustomRelay;
+window.updateRelaySelector = updateRelaySelector;
